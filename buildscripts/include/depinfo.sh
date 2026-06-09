@@ -26,10 +26,14 @@ v_libvpx=1.13
 dep_mbedtls=()
 dep_dav1d=()
 dep_libvorbis=(libogg)
+# FLTR-20042 IT-minimal: dav1d + libxml2 dropped from the FFmpeg dep
+# tree. FFmpeg's IT-minimal configure (flavors/default.sh) doesn't
+# pass --enable-libdav1d or --enable-libxml2 anymore. Encoders-gpl
+# variant still pulls them.
 if [ -n "${ENCODERS_GPL+x}" ]; then
 	dep_ffmpeg=(mbedtls dav1d libxml2 libvorbis libvpx libx264)
 else
-	dep_ffmpeg=(mbedtls dav1d libxml2)
+	dep_ffmpeg=(mbedtls)
 fi
 dep_freetype2=()
 dep_fribidi=()
@@ -37,8 +41,15 @@ dep_harfbuzz=()
 dep_libass=(freetype fribidi harfbuzz)
 dep_lua=()
 dep_shaderc=()
+# FLTR-20042 IT-minimal: libass dropped from the mpv dep tree. With
+# libass not built/installed, pkg-config can't find it at mpv configure
+# time and mpv auto-skips libass support — same effect as `-Dlibass=disabled`
+# but compatible with mpv 0.36 (which doesn't expose libass as a feature
+# option; we hit `meson.build:1:0: ERROR: Unknown option: "libass"` on
+# the first attempt). The subtitle stack (freetype + fribidi + harfbuzz)
+# transitively disappears since nothing else pulls it in.
 if [ -n "${ENCODERS_GPL+x}" ]; then
-	dep_mpv=(ffmpeg libass fftools_ffi)
+	dep_mpv=(ffmpeg fftools_ffi)
 else
-	dep_mpv=(ffmpeg libass)
+	dep_mpv=(ffmpeg)
 fi
