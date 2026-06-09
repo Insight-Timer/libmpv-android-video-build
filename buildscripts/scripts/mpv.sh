@@ -26,7 +26,13 @@ meson setup $build --cross-file "$prefix_dir"/crossfile.txt \
 	-Diconv=disabled \
 	-Dvulkan=disabled \
    	-Dlibplacebo=disabled \
- 	-Dmanpage-build=disabled
+ 	-Dmanpage-build=disabled \
+	-Dlibass=disabled \
+	-Dlcms2=disabled \
+	-Dlibarchive=disabled \
+	-Drubberband=disabled \
+	-Dzimg=disabled \
+	-Djpeg=disabled
 
 ninja -C $build -j$cores
 DESTDIR="$prefix_dir" ninja -C $build install
