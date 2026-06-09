@@ -41,15 +41,17 @@ dep_harfbuzz=()
 dep_libass=(freetype fribidi harfbuzz)
 dep_lua=()
 dep_shaderc=()
-# FLTR-20042 IT-minimal: libass dropped from the mpv dep tree. With
-# libass not built/installed, pkg-config can't find it at mpv configure
-# time and mpv auto-skips libass support — same effect as `-Dlibass=disabled`
-# but compatible with mpv 0.36 (which doesn't expose libass as a feature
-# option; we hit `meson.build:1:0: ERROR: Unknown option: "libass"` on
-# the first attempt). The subtitle stack (freetype + fribidi + harfbuzz)
-# transitively disappears since nothing else pulls it in.
+# FLTR-20042: libass kept in the mpv dep tree. We TRIED to drop it (for
+# the ~7.8 MB iOS subtitle-stack saving) but mpv 0.36 declares libass
+# as a hard meson dependency without a feature-option fallback. Removing
+# it requires patching mpv source (mpv-remove-libass.patch) — the patch
+# exists for darwin's v0.36.0 pin but doesn't apply against Android's
+# mpv pin (`78d43740`, 549 commits ahead of v0.36.0). Regenerating the
+# patch against Android's SHA is ~1 day of work; deferred to production
+# adoption. For the spike we keep libass building and just take the
+# FFmpeg codec/demuxer trim (≈2-3 MB on libmpv.so).
 if [ -n "${ENCODERS_GPL+x}" ]; then
-	dep_mpv=(ffmpeg fftools_ffi)
+	dep_mpv=(ffmpeg libass fftools_ffi)
 else
-	dep_mpv=(ffmpeg)
+	dep_mpv=(ffmpeg libass)
 fi
