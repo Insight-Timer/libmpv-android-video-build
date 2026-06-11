@@ -39,16 +39,22 @@ jobs:
         run: |
           sudo chmod +x bundle_default.sh
           ./bundle_default.sh
-      - name: Bundle (full)
-        working-directory: ./buildscripts
-        run: |
-          sudo chmod +x bundle_full.sh
-          ./bundle_full.sh
-      - name: Bundle (encoders-gpl)
-        working-directory: ./buildscripts
-        run: |
-          sudo chmod +x bundle_encoders-gpl.sh
-          ./bundle_encoders-gpl.sh
+      # FLTR-20042: full + encoders-gpl bundles disabled. IT only needs
+      # the default flavor; the full bundle still uses --enable-hwaccels
+      # which auto-probes for libdav1d at FFmpeg configure time even
+      # though our IT-minimal default doesn't need av1, and the
+      # encoders-gpl bundle is for GPL-encoding scenarios IT doesn't use.
+      # Re-enable these jobs if you need full-feature libmpv builds.
+      # - name: Bundle (full)
+      #   working-directory: ./buildscripts
+      #   run: |
+      #     sudo chmod +x bundle_full.sh
+      #     ./bundle_full.sh
+      # - name: Bundle (encoders-gpl)
+      #   working-directory: ./buildscripts
+      #   run: |
+      #     sudo chmod +x bundle_encoders-gpl.sh
+      #     ./bundle_encoders-gpl.sh
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
