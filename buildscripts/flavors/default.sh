@@ -79,10 +79,14 @@ cpuflags=
 	--disable-audiotoolbox \
 	\
 	--enable-small \
+	--enable-hwaccels \
 	--enable-optimizations \
 	--enable-runtime-cpudetect \
 	\
 	--enable-mbedtls \
+	\
+	--enable-libdav1d \
+	--enable-libxml2 \
 	\
 	--enable-avutil \
 	--enable-avcodec \
@@ -112,9 +116,6 @@ cpuflags=
 	--enable-bsf=aac_adtstoasc \
 	--enable-bsf=h264_mp4toannexb \
 	--enable-bsf=hevc_mp4toannexb \
-	\
-	--enable-hwaccel=h264_mediacodec \
-	--enable-hwaccel=hevc_mediacodec \
 	\
 	--enable-protocol=file \
 	--enable-protocol=http \

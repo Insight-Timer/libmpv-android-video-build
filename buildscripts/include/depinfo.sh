@@ -26,15 +26,17 @@ v_libvpx=1.13
 dep_mbedtls=()
 dep_dav1d=()
 dep_libvorbis=(libogg)
-# FLTR-20042 IT-minimal Phase 2: dav1d + libxml2 dropped. Works because
-# flavors/default.sh replaces `--enable-hwaccels` (which would auto-probe
-# for libdav1d even though we never enable av1 decoders) with explicit
-# `--enable-hwaccel=h264_mediacodec` + `--enable-hwaccel=hevc_mediacodec`.
-# Encoders-gpl flavor still pulls dav1d + libxml2 for its own reasons.
+# FLTR-20042: dav1d + libxml2 kept in the FFmpeg dep tree. We TRIED to
+# drop them since the IT-minimal configure doesn't use them, but
+# FFmpeg's `--enable-hwaccels` flag (which we keep, for MediaCodec
+# h264/hevc hwaccels) probes for dav1d at configure time, failing with
+# "ERROR: dav1d >= 0.5.0 not found using pkg-config" when it isn't
+# installed. Easier to keep building dav1d than to drop --enable-hwaccels
+# and enumerate every hwaccel by hand. ~1 MB savings deferred.
 if [ -n "${ENCODERS_GPL+x}" ]; then
 	dep_ffmpeg=(mbedtls dav1d libxml2 libvorbis libvpx libx264)
 else
-	dep_ffmpeg=(mbedtls)
+	dep_ffmpeg=(mbedtls dav1d libxml2)
 fi
 dep_freetype2=()
 dep_fribidi=()
@@ -42,15 +44,17 @@ dep_harfbuzz=()
 dep_libass=(freetype fribidi harfbuzz)
 dep_lua=()
 dep_shaderc=()
-# FLTR-20042 IT-minimal Phase 2: libass dropped from dep_mpv. Works
-# because `patches/mpv/mpv_remove_libass.patch` (regenerated against
-# Android's mpv SHA 78d43740) strips every libass call site from mpv
-# source — mpv no longer requires libass at configure time. Subtitle
-# stack (freetype + fribidi + harfbuzz) cascades out since nothing
-# else pulls them in. Estimated ~4 MB more saving on libmpv.so per
-# ABI vs Phase 1.
+# FLTR-20042: libass kept in the mpv dep tree. We TRIED to drop it (for
+# the ~7.8 MB iOS subtitle-stack saving) but mpv 0.36 declares libass
+# as a hard meson dependency without a feature-option fallback. Removing
+# it requires patching mpv source (mpv-remove-libass.patch) — the patch
+# exists for darwin's v0.36.0 pin but doesn't apply against Android's
+# mpv pin (`78d43740`, 549 commits ahead of v0.36.0). Regenerating the
+# patch against Android's SHA is ~1 day of work; deferred to production
+# adoption. For the spike we keep libass building and just take the
+# FFmpeg codec/demuxer trim (≈2-3 MB on libmpv.so).
 if [ -n "${ENCODERS_GPL+x}" ]; then
-	dep_mpv=(ffmpeg fftools_ffi)
+	dep_mpv=(ffmpeg libass fftools_ffi)
 else
-	dep_mpv=(ffmpeg)
+	dep_mpv=(ffmpeg libass)
 fi
