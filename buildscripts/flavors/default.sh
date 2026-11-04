@@ -6,7 +6,7 @@
 # Targets only IT's actual playback needs:
 #   - HLS (VOD + live) + plain MP4 over HTTPS
 #   - h264 + HEVC video
-#   - AAC + AC-3 + E-AC-3 audio
+#   - AAC + AC-3 + E-AC-3 + MP3 audio (MP3: downloaded tracks)
 #   - mp4/fMP4 + MPEG-TS segment containers
 #   - VideoToolbox / MediaCodec hardware decode
 #   - No subtitles, no DASH, no AV1, no encoders, no RTMP/RTSP
@@ -102,16 +102,19 @@ cpuflags=
 	--enable-decoder=ac3 \
 	--enable-decoder=eac3 \
 	--enable-decoder=pcm* \
+	--enable-decoder=mp3* \
 	\
 	--enable-demuxer=hls \
 	--enable-demuxer=mov \
 	--enable-demuxer=mpegts \
 	--enable-demuxer=aac \
+	--enable-demuxer=mp3 \
 	\
 	--enable-parser=h264 \
 	--enable-parser=hevc \
 	--enable-parser=aac* \
 	--enable-parser=ac3 \
+	--enable-parser=mpegaudio \
 	\
 	--enable-bsf=aac_adtstoasc \
 	--enable-bsf=h264_mp4toannexb \
